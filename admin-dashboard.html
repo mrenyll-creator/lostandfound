@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>REUNITE Admin Dashboard</title>
+  <link rel="stylesheet" href="style.CSS" />
+  <style>
+    /* Admin specific styles */
+    body {
+      background: #f8f9fa;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      line-height: 1.6;
+    }
+    .container {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 280px;
+      height: 100%;
+      background: linear-gradient(135deg, #800000 0%, #a52a2a 100%);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      padding: 30px 20px;
+      box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+    }
+    .sidebar-top h1 {
+      font-size: 2.5em;
+      font-weight: 700;
+      text-align: center;
+      margin: 0 0 40px 0;
+      user-select: none;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
+    }
+    .sidebar-nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .sidebar-nav ul li {
+      margin-bottom: 10px;
+    }
+    .sidebar-nav {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar-nav ul {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .sidebar-nav ul li a {
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 1.1em;
+      padding: 12px 18px;
+      display: block;
+      border-radius: 8px;
+      background-color: transparent;
+      transition: all 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      font-weight: 500;
+      position: relative;
+    }
+    .sidebar-nav ul li a::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 4px;
+      background-color: transparent;
+      transition: background-color 0.3s ease;
+    }
+    .sidebar-nav ul li a:hover,
+    .sidebar-nav ul li a.active {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      transform: translateX(5px);
+    }
+    .sidebar-nav ul li a:hover::before,
+    .sidebar-nav ul li a.active::before {
+      background-color: #ffffff;
+    }
+    .main-content {
+      flex-grow: 1;
+      padding: 30px;
+      overflow-y: auto;
+      position: relative;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+    }
+    .section {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+      padding: 30px;
+      margin-bottom: 30px;
+      max-width: 100%;
+      border: 1px solid #e9ecef;
+      animation: fadeInPage 0.8s ease forwards;
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+    @keyframes fadeInPage {
+      from {
+        opacity: 0;
+        transform: translateY(15px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    h1, h2 {
+      color: #800000;
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+    h1 {
+      font-size: 2.2em;
+      margin-bottom: 30px;
+    }
+    h2 {
+      font-size: 1.8em;
+    }
+    form {
+      margin-bottom: 30px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #495057;
+      font-size: 0.95em;
+    }
+    input[type="text"], input[type="password"] {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 20px;
+      border: 2px solid #dee2e6;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', sans-serif;
+      font-size: 1em;
+      transition: border-color 0.3s ease;
+    }
+    input[type="text"]:focus, input[type="password"]:focus {
+      outline: none;
+      border-color: #800000;
+      box-shadow: 0 0 0 3px rgba(128,0,0,0.1);
+    }
+    button {
+      background-color: #800000;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1em;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 5px rgba(128,0,0,0.2);
+    }
+    button:hover {
+      background-color: #660000;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(128,0,0,0.3);
+    }
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      margin-top: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    th, td {
+      text-align: left;
+      padding: 15px 20px;
+      border-bottom: 1px solid #e9ecef;
+      vertical-align: middle;
+      color: #495057;
+      font-size: 0.95em;
+    }
+    th {
+      background-color: #f8f9fa;
+      font-weight: 700;
+      color: #800000;
+      border-bottom: 2px solid #dee2e6;
+    }
+    tbody tr:nth-child(even) {
+      background-color: #f8f9fa;
+    }
+    tbody tr:hover {
+      background-color: #e9ecef;
+      transition: background-color 0.2s ease;
+    }
+    .admin-table button {
+      background-color: #a52a2a;
+      border: none;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9em;
+      transition: all 0.3s ease;
+      margin-right: 5px;
+    }
+    .admin-table button:hover {
+      background-color: #7a1a1a;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(122,26,26,0.3);
+    }
+    .logout-section {
+      margin-top: auto;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    .logout-button {
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0.1);
+      color: white;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 12px 18px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    .logout-button:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+      transform: translateX(5px);
+    }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 250px;
+      }
+      .sidebar-top h1 {
+        font-size: 2em;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .section {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="sidebar-top">
+        <h1>REUNITE</h1>
+      </div>
+      <nav class="sidebar-nav">
+        <ul>
+          <li><a href="#add-item" class="active">Add Lost Item</a></li>
+          <li><a href="#lost-items">Lost Items</a></li>
+          <li><a href="#claimed-items">Claimed Items</a></li>
+          <li><a href="#trashed-items">Trashed Items</a></li>
+          <li><a href="#comments">Comments</a></li>
+          <li><a href="#change-credentials">Change Credentials</a></li>
+        </ul>
+        <div class="logout-section">
+          <button id="logout-btn" class="logout-button">Logout</button>
+        </div>
+      </nav>
+    </aside>
+    <main class="main-content">
+      <h1>Admin Dashboard</h1>
+
+  <section id="add-item" class="section active">
+    <h2>Add Lost Item</h2>
+    <form id="addItemForm" enctype="multipart/form-data">
+      <label for="description">Description</label>
+      <input type="text" id="description" name="description" required />
+      <label for="location">Location</label>
+      <input type="text" id="location" name="location" required />
+      <label for="image">Image</label>
+      <input type="file" id="image" name="image" accept="image/*" />
+      <button type="submit">Add Lost Item</button>
+    </form>
+  </section>
+
+  <section id="lost-items" class="section">
+    <h2>Lost Items</h2>
+    <table id="lostItemsTable" class="admin-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Location</th>
+          <th>Image</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Lost items list populated here -->
+      </tbody>
+    </table>
+  </section>
+
+  <section id="claimed-items" class="section">
+    <h2>Claimed Items</h2>
+    <table id="claimedItemsTable" class="admin-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Location</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Claimed items list populated here -->
+      </tbody>
+    </table>
+  </section>
+
+  <section id="trashed-items" class="section">
+    <h2>Trashed Items</h2>
+    <table id="trashedItemsTable" class="admin-table">
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Location</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Trashed items list populated here -->
+      </tbody>
+    </table>
+  </section>
+
+  <section id="comments" class="section">
+    <h2>Comments</h2>
+    <table id="commentsTable" class="admin-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Comment</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Comments list populated here -->
+      </tbody>
+    </table>
+  </section>
+
+  <section id="change-credentials" class="section">
+    <h2>Change Credentials</h2>
+    <form id="changeCredentialsForm">
+      <label for="newUsername">New Username</label>
+      <input type="text" id="newUsername" name="newUsername" required />
+      <label for="newPassword">New Password</label>
+      <input type="password" id="newPassword" name="newPassword" required />
+      <button type="submit">Change Credentials</button>
+    </form>
+  </section>
+
+  <script>
+    const API_BASE = (window.location.protocol === 'file:' || window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') ? 'http://localhost:8000/api' : `${window.location.protocol}//${window.location.hostname}${window.location.port ? ':' + window.location.port : ''}/api`;
+
+    async function getLostItems() {
+      try {
+        const response = await fetch(`${API_BASE}/lost-items`);
+        if (!response.ok) throw new Error('Failed to fetch lost items');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching lost items:', error);
+        return [];
+      }
+    }
+
+    async function getClaimedItems() {
+      try {
+        const response = await fetch(`${API_BASE}/claimed-items`);
+        if (!response.ok) throw new Error('Failed to fetch claimed items');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching claimed items:', error);
+        return [];
+      }
+    }
+
+    async function getTrashedItems() {
+      try {
+        const response = await fetch(`${API_BASE}/trashed-items`);
+        if (!response.ok) throw new Error('Failed to fetch trashed items');
+        return await response.json();
+      } catch (error) {
+        console.error('Error fetching trashed items:', error);
+        return [];
+      }
+    }
+
+    function getComments() {
+      return JSON.parse(localStorage.getItem('comments')) || [];
+    }
+
+    function saveComments(comments) {
+      localStorage.setItem('comments', JSON.stringify(comments));
+    }
+
+    async function addLostItem(description, location, imageFile) {
+      try {
+        const formData = new FormData();
+        formData.append('description', description);
+        formData.append('location', location);
+        if (imageFile) {
+          formData.append('image', imageFile);
+        }
+        const response = await fetch(`${API_BASE}/lost-items`, {
+          method: 'POST',
+          body: formData
+        });
+        if (!response.ok) throw new Error('Failed to add lost item');
+        return true;
+      } catch (error) {
+        console.error('Error adding lost item:', error);
+        return false;
+      }
+    }
+
+    async function claimItem(description, location) {
+      try {
+        const response = await fetch(`${API_BASE}/claim-item`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description, location })
+        });
+        if (!response.ok) throw new Error('Failed to claim item');
+        return true;
+      } catch (error) {
+        console.error('Error claiming item:', error);
+        return false;
+      }
+    }
+
+    async function trashItem(description, location) {
+      try {
+        const response = await fetch(`${API_BASE}/trash-item`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description, location })
+        });
+        if (!response.ok) throw new Error('Failed to trash item');
+        return true;
+      } catch (error) {
+        console.error('Error trashing item:', error);
+        return false;
+      }
+    }
+
+    async function restoreItem(description, location) {
+      try {
+        const response = await fetch(`${API_BASE}/restore-item`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ description, location })
+        });
+        if (!response.ok) throw new Error('Failed to restore item');
+        return true;
+      } catch (error) {
+        console.error('Error restoring item:', error);
+        return false;
+      }
+    }
+
+    function renderLostItems(items) {
+      const tbody = document.querySelector('#lostItemsTable tbody');
+      tbody.innerHTML = '';
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const descTd = document.createElement('td');
+        descTd.textContent = item.description;
+        tr.appendChild(descTd);
+
+        const locTd = document.createElement('td');
+        locTd.textContent = item.location;
+        tr.appendChild(locTd);
+
+        const imgTd = document.createElement('td');
+        if (item.image) {
+          const img = document.createElement('img');
+          img.src = item.image;
+          img.style.maxWidth = '100px';
+          img.style.maxHeight = '100px';
+          img.alt = 'Item image';
+          imgTd.appendChild(img);
+        } else {
+          imgTd.textContent = 'No image';
+        }
+        tr.appendChild(imgTd);
+
+        const actionTd = document.createElement('td');
+        const claimBtn = document.createElement('button');
+        claimBtn.textContent = 'Mark as Claimed';
+        claimBtn.onclick = async () => {
+          if (await claimItem(item.description, item.location)) {
+            loadItems();
+          } else {
+            alert('Failed to claim item');
+          }
+        };
+        actionTd.appendChild(claimBtn);
+
+        const trashBtn = document.createElement('button');
+        trashBtn.textContent = 'Trash';
+        trashBtn.onclick = async () => {
+          if (await trashItem(item.description, item.location)) {
+            loadItems();
+          } else {
+            alert('Failed to trash item');
+          }
+        };
+        actionTd.appendChild(trashBtn);
+        tr.appendChild(actionTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderClaimedItems(items) {
+      const tbody = document.querySelector('#claimedItemsTable tbody');
+      tbody.innerHTML = '';
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const descTd = document.createElement('td');
+        descTd.textContent = item.description;
+        tr.appendChild(descTd);
+
+        const locTd = document.createElement('td');
+        locTd.textContent = item.location;
+        tr.appendChild(locTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderTrashedItems(items) {
+      const tbody = document.querySelector('#trashedItemsTable tbody');
+      tbody.innerHTML = '';
+      items.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const descTd = document.createElement('td');
+        descTd.textContent = item.description;
+        tr.appendChild(descTd);
+
+        const locTd = document.createElement('td');
+        locTd.textContent = item.location;
+        tr.appendChild(locTd);
+
+        const actionTd = document.createElement('td');
+        const restoreBtn = document.createElement('button');
+        restoreBtn.textContent = 'Restore';
+        restoreBtn.onclick = async () => {
+          if (await restoreItem(item.description, item.location)) {
+            loadItems();
+          } else {
+            alert('Failed to restore item');
+          }
+        };
+        actionTd.appendChild(restoreBtn);
+        tr.appendChild(actionTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderComments(comments) {
+      const tbody = document.querySelector('#commentsTable tbody');
+      tbody.innerHTML = '';
+      comments.forEach(comment => {
+        const tr = document.createElement('tr');
+
+        const nameTd = document.createElement('td');
+        nameTd.textContent = comment.name;
+        tr.appendChild(nameTd);
+
+        const commentTd = document.createElement('td');
+        commentTd.textContent = comment.comment;
+        tr.appendChild(commentTd);
+
+        const actionTd = document.createElement('td');
+        const replyBtn = document.createElement('button');
+        replyBtn.textContent = 'Reply';
+        replyBtn.onclick = () => {
+          const reply = prompt('Enter your reply:');
+          if (reply) {
+            alert('Reply sent: ' + reply);
+            // In a real app, send reply to user
+          }
+        };
+        actionTd.appendChild(replyBtn);
+        tr.appendChild(actionTd);
+
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadItems() {
+      const lostItems = await getLostItems();
+      renderLostItems(lostItems);
+
+      const claimedItems = await getClaimedItems();
+      renderClaimedItems(claimedItems);
+
+      const trashedItems = await getTrashedItems();
+      renderTrashedItems(trashedItems);
+
+      const comments = getComments();
+      renderComments(comments);
+    }
+
+    document.getElementById('addItemForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const desc = e.target.description.value.trim();
+      const loc = e.target.location.value.trim();
+      const imgFile = e.target.image.files[0];
+      if (!desc || !loc) {
+        alert('Please enter both description and location');
+        return;
+      }
+      if (await addLostItem(desc, loc, imgFile)) {
+        e.target.reset();
+        loadItems();
+      } else {
+        alert('Failed to add lost item');
+      }
+    });
+
+    document.getElementById('changeCredentialsForm').addEventListener('submit', e => {
+      e.preventDefault();
+      const newUsername = e.target.newUsername.value.trim();
+      const newPassword = e.target.newPassword.value.trim();
+      if (!newUsername || !newPassword) {
+        alert('Please enter both new username and password');
+        return;
+      }
+      localStorage.setItem('adminUsername', newUsername);
+      localStorage.setItem('adminPassword', newPassword);
+      alert('Credentials changed successfully');
+      e.target.reset();
+    });
+
+    // Initial load
+    loadItems();
+
+    // Logout functionality
+    const logoutBtn = document.getElementById('logout-btn');
+    logoutBtn.addEventListener('click', e => {
+      e.preventDefault();
+      if (confirm('Are you sure you want to logout?')) {
+        window.location.href = 'index.html';
+      }
+    });
+
+    // Sidebar navigation
+    const navLinks = document.querySelectorAll('.sidebar-nav a');
+    const sections = document.querySelectorAll('.section');
+
+    navLinks.forEach(link => {
+      link.addEventListener('click', e => {
+        e.preventDefault();
+        const targetId = link.getAttribute('href').substring(1);
+
+        // Activate the clicked nav link
+        navLinks.forEach(nav => nav.classList.remove('active'));
+        link.classList.add('active');
+
+        // Show corresponding section
+        sections.forEach(section => {
+          if (section.id === targetId) {
+            section.classList.add('active');
+          } else {
+            section.classList.remove('active');
+          }
+        });
+      });
+    });
+  </script>
+</body>
+</html>
